@@ -51,6 +51,7 @@
         <li
           class="list-group-item"
           *ngFor="let item of selectedList.items; index as i"
+          [ngStyle]="{ 'background-color': item.colour || 'white' }"
         >
           <div class="d-flex">
             <div class="todo-item-checkbox">
@@ -69,14 +70,13 @@
                 [(ngModel)]="item.title"
                 (keyup.enter)="updateItem(item, true)"
                 (blur)="updateItem(item)"
-                autofocus="autofocus"
+                autofocus
               />
               <div
-                class="todo-item-title"
+                class="todo-item-title form-control item-input-control"
                 *ngIf="item != selectedItem"
                 [ngClass]="{ 'done-todo': item.done }"
                 (click)="editItem(item, 'itemTitle' + i)"
-                class="form-control item-input-control"
               >
                 <span>{{ item.title }}</span>
               </div>
@@ -203,6 +203,14 @@
           [(ngModel)]="selectedItem.tags"
           name="tags"
           placeholder="Comma-separated tags (e.g. home, urgent)"
+        />
+        <label for="colour">Background Color</label>
+        <input
+          type="color"
+          id="colour"
+          class="form-control form-control-color"
+          formControlName="colour"
+          style="height: 2.5rem; width: 3.5rem; padding: 0.25rem"
         />
       </div>
     </form>

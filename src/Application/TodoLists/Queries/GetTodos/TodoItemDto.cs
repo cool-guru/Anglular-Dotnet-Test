@@ -20,6 +20,7 @@ public class TodoItemDto : IMapFrom<TodoItem>
 
     public List<string> Tags { get; set; } = new();
 
+    public string Colour { get; set; } = "#ffffff"; 
     public void Mapping(Profile profile)
     {
         profile.CreateMap<TodoItem, TodoItemDto>()
