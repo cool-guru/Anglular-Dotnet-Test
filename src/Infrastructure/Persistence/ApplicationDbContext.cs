@@ -33,9 +33,14 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
         base.OnModelCreating(builder);
+
+        builder.Entity<TodoItem>()
+            .Property(e => e.Tags)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+            );
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
