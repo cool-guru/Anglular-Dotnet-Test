@@ -31,13 +31,9 @@ public class CreateTodoItemCommandHandler : IRequestHandler<CreateTodoItemComman
         {
             ListId = request.ListId,
             Title = request.Title,
-<<<<<<< HEAD
-            Done = false,
-            Tags = request.Tags ?? new List<string>() 
-=======
+            Tags = request.Tags ?? new List<string>(),
             Colour = request.Colour ?? "#ffffff",
             Done = false
->>>>>>> feature/todo-background-color
         };
 
         entity.AddDomainEvent(new TodoItemCreatedEvent(entity));
