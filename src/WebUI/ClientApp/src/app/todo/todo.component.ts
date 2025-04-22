@@ -33,6 +33,9 @@ export class TodoComponent implements OnInit {
   listOptionsModalRef: BsModalRef;
   deleteListModalRef: BsModalRef;
   itemDetailsModalRef: BsModalRef;
+  activeTagFilter: string = '';
+  searchText: string = '';
+
   itemDetailsFormGroup = this.fb.group({
     id: [null],
     listId: [null],
@@ -60,6 +63,38 @@ export class TodoComponent implements OnInit {
       },
       (error) => console.error(error)
     );
+  }
+
+  getFilteredItems(): TodoItemDto[] {
+    if (!this.selectedList?.items) return [];
+    let items = this.selectedList.items;
+
+    if (this.activeTagFilter) {
+      items = items.filter((item) => item.tags?.includes(this.activeTagFilter));
+    }
+
+    if (this.searchText?.trim()) {
+      const lower = this.searchText.toLowerCase();
+      items = items.filter((item) => item.title.toLowerCase().includes(lower));
+    }
+
+    return items;
+  }
+
+  getMostUsedTags(): string[] {
+    const tagCount: Record<string, number> = {};
+    this.lists?.forEach((list) => {
+      list.items?.forEach((item) => {
+        item.tags?.forEach((tag) => {
+          tagCount[tag] = (tagCount[tag] || 0) + 1;
+        });
+      });
+    });
+
+    return Object.entries(tagCount)
+      .sort((a, b) => b[1] - a[1])
+      .map((entry) => entry[0])
+      .slice(0, 5);
   }
 
   // Lists
@@ -143,10 +178,21 @@ export class TodoComponent implements OnInit {
 
   // Items
   showItemDetailsModal(template: TemplateRef<any>, item: TodoItemDto): void {
-    this.selectedItem = item;
+    const selected = new TodoItemDto();
+    Object.assign(selected, item);
+    this.selectedItem = selected;
+
+    const safeTags = Array.isArray(selected.tags)
+      ? selected.tags.join(', ')
+      : '';
+
     this.itemDetailsFormGroup.patchValue({
-      ...this.selectedItem,
-      tags: this.selectedItem.tags?.join(', ') || '',
+      id: selected.id,
+      listId: selected.listId,
+      priority: selected.priority,
+      note: selected.note,
+      colour: selected.colour,
+      tags: safeTags,
     });
 
     this.itemDetailsModalRef = this.modalService.show(template);
@@ -179,11 +225,27 @@ export class TodoComponent implements OnInit {
           this.lists[listIndex].items.push(this.selectedItem);
         }
 
-        this.selectedItem.priority = item.priority;
-        this.selectedItem.note = item.note;
-        this.selectedItem.colour = item.colour;
+        const index = this.selectedList.items.findIndex(
+          (i) => i.id === this.selectedItem.id
+        );
+        if (index !== -1) {
+          const itemToUpdate = this.selectedList.items[index];
+          itemToUpdate.priority = item.priority;
+          itemToUpdate.note = item.note;
+          itemToUpdate.colour = item.colour;
+          itemToUpdate.tags = item.tags;
+        }
+        if (index !== -1) {
+          const itemToUpdate = this.selectedList.items[index];
+          itemToUpdate.priority = item.priority;
+          itemToUpdate.note = item.note;
+          itemToUpdate.colour = item.colour;
+          itemToUpdate.tags = item.tags;
+        }
+
         this.itemDetailsModalRef.hide();
         this.itemDetailsFormGroup.reset();
+        this.selectedItem = null;
       },
       (error) => console.error(error)
     );

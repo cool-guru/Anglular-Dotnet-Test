@@ -3,6 +3,12 @@
 <p>This is a complex todo list component.</p>
 
 <p *ngIf="!lists"><em>Loading...</em></p>
+<input
+  type="text"
+  class="form-control mb-2"
+  placeholder="Search todos..."
+  [(ngModel)]="searchText"
+/>
 
 <div *ngIf="lists">
   <div class="row">
@@ -47,10 +53,30 @@
           <i class="bi bi-three-dots-vertical"></i>
         </button>
       </div>
+
+      <div class="mb-2">
+        <strong>Filter by Tag:</strong>
+        <button
+          class="btn btn-sm btn-outline-secondary mx-1"
+          *ngFor="let tag of getMostUsedTags()"
+          [class.active]="activeTagFilter === tag"
+          (click)="activeTagFilter = tag"
+        >
+          {{ tag }}
+        </button>
+        <button
+          *ngIf="activeTagFilter"
+          class="btn btn-sm btn-outline-secondary mx-1"
+          (click)="activeTagFilter = ''"
+        >
+          Clear
+        </button>
+      </div>
+
       <ul id="todo-items" class="list-group mb-2">
         <li
           class="list-group-item"
-          *ngFor="let item of selectedList.items; index as i"
+          *ngFor="let item of getFilteredItems(); index as i"
           [ngStyle]="{ 'background-color': item.colour || 'white' }"
         >
           <div class="d-flex">
@@ -79,6 +105,15 @@
                 (click)="editItem(item, 'itemTitle' + i)"
               >
                 <span>{{ item.title }}</span>
+                <div *ngIf="item.tags?.length" class="mt-1">
+                  <span
+                    *ngFor="let tag of item.tags"
+                    class="badge bg-secondary me-1"
+                    style="font-size: 0.75rem"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
               </div>
             </div>
             <div class="todo-item-commands">
@@ -200,8 +235,7 @@
           id="tags"
           type="text"
           class="form-control"
-          [(ngModel)]="selectedItem.tags"
-          name="tags"
+          formControlName="tags"
           placeholder="Comma-separated tags (e.g. home, urgent)"
         />
         <label for="colour">Background Color</label>

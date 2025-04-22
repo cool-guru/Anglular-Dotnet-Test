@@ -41,6 +41,10 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
                 v => string.Join(',', v),
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
             );
+
+        builder.Entity<TodoItem>()
+            .Property(e => e.Colour)
+            .HasMaxLength(20);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
