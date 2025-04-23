@@ -17,7 +17,7 @@ public record UpdateTodoItemDetailCommand : IRequest
     public string? Note { get; init; }
     
     public List<string> Tags { get; init; } = new(); 
-    public string Colour { get; set; }
+    public string Colour { get; set; } = "#ffffff";
 
 }
 
@@ -43,9 +43,8 @@ public class UpdateTodoItemDetailCommandHandler : IRequestHandler<UpdateTodoItem
         entity.ListId = request.ListId;
         entity.Priority = request.Priority;
         entity.Note = request.Note;
-        entity.Tags = request.Tags; 
-        
-        entity.Colour = request.Colour;
+        entity.Tags = request.Tags;
+        entity.Colour = request.Colour ?? "#ffffff";
 
         await _context.SaveChangesAsync(cancellationToken);
 
