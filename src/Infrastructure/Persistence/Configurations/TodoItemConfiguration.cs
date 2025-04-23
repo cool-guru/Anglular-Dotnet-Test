@@ -14,5 +14,15 @@ public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
 
         builder.Property(t => t.Note)
             .HasMaxLength(2);
+
+        builder.Property(t => t.Colour)
+            .HasMaxLength(20)
+            .IsRequired(); 
+        builder
+        .Property(t => t.Tags)
+        .HasConversion(
+            v => string.Join(',', v),
+            v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+        );
     }
 }
