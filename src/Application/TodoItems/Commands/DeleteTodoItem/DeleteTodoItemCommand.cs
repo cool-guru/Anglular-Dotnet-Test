@@ -6,7 +6,12 @@ using Todo_App.Domain.Events;
 
 namespace Todo_App.Application.TodoItems.Commands.DeleteTodoItem;
 
-public record DeleteTodoItemCommand(int Id) : IRequest;
+public class DeleteTodoItemCommand : IRequest
+{
+    public int Id { get; }
+
+    public DeleteTodoItemCommand(int id) => Id = id;
+}
 
 public class DeleteTodoItemCommandHandler : IRequestHandler<DeleteTodoItemCommand>
 {
@@ -27,10 +32,7 @@ public class DeleteTodoItemCommandHandler : IRequestHandler<DeleteTodoItemComman
             throw new NotFoundException(nameof(TodoItem), request.Id);
         }
 
-        _context.TodoItems.Remove(entity);
-
-        entity.AddDomainEvent(new TodoItemDeletedEvent(entity));
-
+        entity.IsDeleted = true;
         await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

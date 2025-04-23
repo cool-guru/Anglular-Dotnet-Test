@@ -12,7 +12,8 @@ public class TodoListConfiguration : IEntityTypeConfiguration<TodoList>
             .HasMaxLength(200)
             .IsRequired();
 
-        builder
-            .OwnsOne(b => b.Colour);
+        builder.Property(t => t.Colour)
+            .HasMaxLength(20)
+            .IsRequired();
     }
 }

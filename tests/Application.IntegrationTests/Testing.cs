@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Respawn;
 using Todo_App.Infrastructure.Identity;
 using Todo_App.Infrastructure.Persistence;
+using Todo_App.Application.Common.Interfaces;
 
 namespace Todo_App.Application.IntegrationTests;
 
@@ -20,6 +21,8 @@ public partial class Testing
     private static Checkpoint _checkpoint = null!;
     private static string? _currentUserId;
 
+    public static CustomWebApplicationFactory Factory { get; private set; } = new CustomWebApplicationFactory();
+
     [OneTimeSetUp]
     public void RunBeforeAnyTests()
     {
@@ -31,6 +34,13 @@ public partial class Testing
         {
             TablesToIgnore = new[] { "__EFMigrationsHistory" }
         };
+    }
+
+    public static async Task<IApplicationDbContext> GetDbContextAsync()
+    {
+        var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
+        return await Task.FromResult(context);
     }
 
     public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)

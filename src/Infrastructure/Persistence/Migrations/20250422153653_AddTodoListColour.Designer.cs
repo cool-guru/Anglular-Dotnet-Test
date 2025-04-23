@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Todo_App.Infrastructure.Persistence;
 
@@ -11,9 +12,10 @@ using Todo_App.Infrastructure.Persistence;
 namespace Todo_App.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250422153653_AddTodoListColour")]
+    partial class AddTodoListColour
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,8 +312,7 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Colour")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -321,11 +322,6 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
 
                     b.Property<bool>("Done")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -337,7 +333,8 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -345,12 +342,10 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("Reminder")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Tags")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
@@ -367,20 +362,11 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Colour")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -389,7 +375,9 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
@@ -521,6 +509,29 @@ namespace Todo_App.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("List");
+                });
+
+            modelBuilder.Entity("Todo_App.Domain.Entities.TodoList", b =>
+                {
+                    b.OwnsOne("Todo_App.Domain.ValueObjects.Colour", "Colour", b1 =>
+                        {
+                            b1.Property<int>("TodoListId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Code")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("TodoListId");
+
+                            b1.ToTable("TodoLists");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TodoListId");
+                        });
+
+                    b.Navigation("Colour")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Todo_App.Domain.Entities.TodoList", b =>

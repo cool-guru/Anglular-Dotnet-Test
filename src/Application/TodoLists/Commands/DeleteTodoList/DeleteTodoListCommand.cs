@@ -6,8 +6,12 @@ using Todo_App.Domain.Entities;
 
 namespace Todo_App.Application.TodoLists.Commands.DeleteTodoList;
 
-public record DeleteTodoListCommand(int Id) : IRequest;
+public class DeleteTodoListCommand : IRequest
+{
+    public int Id { get; }
 
+    public DeleteTodoListCommand(int id) => Id = id;
+}
 public class DeleteTodoListCommandHandler : IRequestHandler<DeleteTodoListCommand>
 {
     private readonly IApplicationDbContext _context;
@@ -28,6 +32,7 @@ public class DeleteTodoListCommandHandler : IRequestHandler<DeleteTodoListComman
             throw new NotFoundException(nameof(TodoList), request.Id);
         }
 
+        entity.IsDeleted = true;
         _context.TodoLists.Remove(entity);
 
         await _context.SaveChangesAsync(cancellationToken);
