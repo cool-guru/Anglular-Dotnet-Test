@@ -53,16 +53,17 @@ export class TodoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.listsClient.get().subscribe(
-      (result) => {
-        this.lists = result.lists;
-        this.priorityLevels = result.priorityLevels;
-        if (this.lists.length) {
-          this.selectedList = this.lists[0];
-        }
-      },
-      (error) => console.error(error)
-    );
+    this.listsClient.get().subscribe((result) => {
+      this.lists = result.lists.filter((list) => !list.isDeleted);
+
+      this.lists.forEach((list) => {
+        list.items = list.items.filter((item) => !item.isDeleted);
+      });
+
+      if (this.lists.length) {
+        this.selectedList = this.lists[0];
+      }
+    });
   }
 
   getFilteredItems(): TodoItemDto[] {

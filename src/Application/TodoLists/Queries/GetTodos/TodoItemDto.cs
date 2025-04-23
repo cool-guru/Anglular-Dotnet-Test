@@ -21,10 +21,15 @@ public class TodoItemDto : IMapFrom<TodoItem>
     public List<string> Tags { get; set; } = new();
 
     public string Colour { get; set; } = "#ffffff"; 
+
+    public bool IsDeleted { get; set; } 
+
     public void Mapping(Profile profile)
     {
         profile.CreateMap<TodoItem, TodoItemDto>()
             .ForMember(d => d.Priority, opt => opt.MapFrom(s => (int)s.Priority))
-            .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags));
+            .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags))
+            .ForMember(d => d.IsDeleted, opt => opt.MapFrom(s => s.IsDeleted));
     }
+
 }

@@ -511,6 +511,9 @@
           },
           "colour": {
             "type": "string"
+          },
+          "isDeleted": {
+            "type": "boolean"
           }
         }
       },
@@ -649,6 +652,9 @@
           "colour": {
             "type": "string",
             "nullable": true
+          },
+          "isDeleted": {
+            "type": "boolean"
           },
           "items": {
             "type": "array",

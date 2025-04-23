@@ -36,12 +36,26 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
         base.OnModelCreating(builder);
 
         builder.Entity<TodoItem>()
+            .HasQueryFilter(t => !t.IsDeleted);
+
+        builder.Entity<TodoList>()
+            .HasQueryFilter(t => !t.IsDeleted);
+
+        builder.Entity<TodoItem>()
             .Property(e => e.Tags)
             .HasConversion(
                 v => string.Join(',', v),
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
             );
 
+        builder.Entity<TodoItem>()
+            .Property(e => e.IsDeleted)
+            .HasDefaultValue(false);
+
+        builder.Entity<TodoList>()
+            .Property(e => e.IsDeleted)
+            .HasDefaultValue(false);
+            
         builder.Entity<TodoItem>()
             .Property(e => e.Colour)
             .HasMaxLength(20);

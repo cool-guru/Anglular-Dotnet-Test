@@ -13,6 +13,7 @@ public class TodoItem : BaseAuditableEntity
     public PriorityLevel Priority { get; set; }
 
     public List<string> Tags { get; set; } = new();
+    public bool IsDeleted { get; set; } = false;
     
     public DateTime? Reminder { get; set; }
 
