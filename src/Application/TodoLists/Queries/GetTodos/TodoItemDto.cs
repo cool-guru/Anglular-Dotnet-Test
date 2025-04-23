@@ -17,7 +17,7 @@ public class TodoItemDto : IMapFrom<TodoItem>
     public int Priority { get; set; }
 
     public string? Note { get; set; }
-
+    public string Colour { get; set; } = "#ffffff"; 
     public void Mapping(Profile profile)
     {
         profile.CreateMap<TodoItem, TodoItemDto>()
